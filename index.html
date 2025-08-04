@@ -14,45 +14,54 @@
             background-color: #0a0d13; /* Deep space black */
             color: #b5f2ff; /* Glowing cyan text */
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            min-height: 100vh;
             margin: 0;
             transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Container for the image, positioned above the form */
+        .image-header {
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        /* Define the fade and spin animation */
+        @keyframes fade-spin {
+            0% {
+                transform: rotate(0deg);
+                opacity: 0.05;
+            }
+            50% {
+                transform: rotate(180deg);
+                opacity: 0.15;
+            }
+            100% {
+                transform: rotate(360deg);
+                opacity: 0.05;
+            }
+        }
+
+        /* The image itself, with subtle styling and animation */
+        .header-image {
+            width: 100%;
+            height: auto;
+            max-height: 25vh;
+            object-fit: contain;
+            filter: blur(5px);
+            animation: fade-spin 30s linear infinite; /* Faster animation */
+        }
+
+        /* Main content container for the form, scrolls over the header */
+        main {
+            width: 100%;
+            max-width: 480px;
+            padding-bottom: 2rem;
             position: relative;
-            overflow: hidden; /* Hide any overflow from the large, spinning element */
-        }
-
-        /* Define the spinning animation */
-        @keyframes spin {
-            from {
-                transform: translate(-50%, -50%) rotate(0deg);
-            }
-            to {
-                transform: translate(-50%, -50%) rotate(360deg);
-            }
-        }
-
-        /* Subtle background image effect */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            /* Make the container larger than the viewport to prevent cropping */
-            width: 150%;
-            height: 150%;
-            /* Your photo from the GitHub repository */
-            background-image: url('https://raw.githubusercontent.com/khanmil/space-risk/main/assets/hi.png');
-            background-color: #0d121c; /* Fallback color for empty space */
-            background-size: contain; /* Ensures the whole image fits within its larger container */
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.03; /* Much more transparent */
-            backdrop-filter: blur(12px); /* Much more blurred */
-            z-index: -1;
-            /* Center the element and apply the spin animation */
-            animation: spin 40s linear infinite; /* Faster spin */
+            z-index: 10; /* Ensures the form scrolls on top of the header */
+            margin-top: -2rem; /* Pulls the form up slightly to overlap the header's padding */
         }
 
         .container {
@@ -171,8 +180,9 @@
                 color: #1e293b;
             }
 
-            body::before {
-                opacity: 0.02;
+            .image-header {
+                filter: blur(2px);
+                opacity: 0.05;
             }
 
             .container {
@@ -229,25 +239,30 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Galactic Conquest Registration</h1>
-        <form id="galacticForm">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter your name" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="conquer" name="conquer">
-                <label for="conquer">I want to conquer the galaxy.</label>
-            </div>
-            <button type="submit">Submit</button>
-        </form>
-        <div id="messageBox" class="message-box"></div>
+    <div class="image-header">
+        <img src="https://raw.githubusercontent.com/khanmil/space-risk/main/assets/hi.png" class="header-image" alt="Galactic themed background image">
     </div>
+    <main>
+        <div class="container">
+            <h1>Galactic Conquest Registration</h1>
+            <form id="galacticForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="conquer" name="conquer">
+                    <label for="conquer">I want to conquer the galaxy.</label>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+            <div id="messageBox" class="message-box"></div>
+        </div>
+    </main>
 
     <script>
         // IMPORTANT: Replace this URL with the deployed Google Apps Script URL
