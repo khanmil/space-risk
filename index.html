@@ -18,7 +18,7 @@
             align-items: center;
             justify-content: center; /* Center content vertically */
             min-height: 100vh; /* Ensures the body is at least as tall as the viewport */
-            padding: 5vh 0; /* Provides top and bottom padding for spacing */
+            padding: 5vh 1rem; /* Consistent padding for all screens */
             margin: 0;
             transition: background-color 0.3s, color 0.3s;
         }
@@ -42,20 +42,18 @@
         /* Subtle background image effect (fixed) */
         body::before {
             content: '';
-            position: fixed; /* Fixed position so it doesn't scroll with content */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* Your photo from the GitHub repository */
             background-image: url('https://raw.githubusercontent.com/khanmil/space-risk/main/assets/hi.png');
-            background-color: #0d121c; /* Fallback color */
+            background-color: #0d121c;
             background-size: cover;
-            background-position: top;
+            background-position: center;
             opacity: 0.05;
             filter: blur(5px);
             z-index: -1;
-            /* Apply the spinning animation */
             animation: fade-spin 30s linear infinite;
         }
 
@@ -63,22 +61,25 @@
         .content-wrapper {
             width: 100%;
             max-width: 480px;
-            padding: 2rem 1rem; /* Adjust padding for mobile responsiveness */
             position: relative;
-            z-index: 10; /* Ensures the form scrolls on top of the fixed background */
-            background-color: transparent;
+            z-index: 10;
         }
 
         .container {
             width: 100%;
-            padding: 2rem 1rem;
-            background-color: rgba(26, 32, 45, 0.8); /* Semi-transparent dark container */
+            padding: 2rem;
+            background-color: rgba(26, 32, 45, 0.8);
             border-radius: 1rem;
-            box-shadow: 0 0 15px rgba(181, 242, 255, 0.2); /* Subtle glow effect */
-            backdrop-filter: blur(10px); /* Blur behind the form */
+            box-shadow: 0 0 15px rgba(181, 242, 255, 0.2);
+            backdrop-filter: blur(10px);
             transition: background-color 0.3s, box-shadow 0.3s;
-            position: relative;
-            z-index: 1;
+        }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem;
+            }
         }
 
         h1 {
@@ -86,7 +87,7 @@
             font-weight: 700;
             text-align: center;
             margin-bottom: 2rem;
-            text-shadow: 0 0 5px #b5f2ff; /* Glowing text */
+            text-shadow: 0 0 5px #b5f2ff;
         }
 
         .form-group {
@@ -115,7 +116,7 @@
         input[type="text"]:focus {
             outline: none;
             border-color: #63b3ed;
-            box-shadow: 0 0 10px #63b3ed; /* Stronger glow on focus */
+            box-shadow: 0 0 10px #63b3ed;
         }
 
         .checkbox-group {
@@ -135,14 +136,14 @@
         button {
             width: 100%;
             padding: 0.75rem;
-            background-color: #4a0e88; /* Dark purple */
+            background-color: #4a0e88;
             color: #ffffff;
             font-weight: 600;
             border: none;
             border-radius: 0.5rem;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
-            box-shadow: 0 0 10px #6a0dad; /* Glowing button */
+            box-shadow: 0 0 10px #6a0dad;
         }
 
         button:hover {
@@ -177,7 +178,7 @@
             color: #fee2e2;
         }
 
-        /* Light mode (for preference-sensitive users) */
+        /* Light mode styling */
         @media (prefers-color-scheme: light) {
             body {
                 background-color: #f1f5f9;
