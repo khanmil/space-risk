@@ -1,321 +1,248 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galactic Conquest Registration</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Base styles for a dark, sci-fi theme */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0d13; /* Deep space black */
-            color: #b5f2ff; /* Glowing cyan text */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center; /* Center content vertically */
-            min-height: 100vh; /* Ensures the body is at least as tall as the viewport */
-            padding: 5vh 0; /* Provides top and bottom padding for spacing */
-            margin: 0;
-            transition: background-color 0.3s, color 0.3s;
-        }
+import React, { useState } from 'react';
 
-        /* Define the fade and spin animation */
-        @keyframes fade-spin {
+// Main App component
+const App = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    conquer: false,
+  });
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
+
+  // IMPORTANT: Replace this URL with the deployed Google Apps Script URL
+  const scriptUrl = 'https://script.google.com/macros/s/AKfycbzR_5FV_ZMEAHdDId1he4kCANlcO8RDNBbn3qoZ8IZ-lv7EK2ub2VSyawX4yyATEgUX/exec';
+  
+  // This function handles changes to the form inputs
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  // This function handles the form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Clear previous messages and show a loading indicator
+    showMessage('Submitting...', 'info');
+
+    // Create a new FormData object to send to the script
+    const formSubmissionData = new FormData();
+    formSubmissionData.append('name', formData.name);
+    formSubmissionData.append('email', formData.email);
+    formSubmissionData.append('conquer', formData.conquer ? 'Yes' : 'No');
+
+    try {
+      // Use URLSearchParams for form-urlencoded content type
+      const response = await fetch(scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors', // Required for Google Apps Script
+        body: new URLSearchParams(formSubmissionData).toString()
+      });
+
+      // Since we're using 'no-cors', we can't read the response.
+      // A successful fetch without network errors is our best indicator.
+      if (response.ok || response.type === 'opaque') {
+        showMessage('Submission successful! We\'ve noted your intent to conquer the galaxy.', 'success');
+        setFormData({ name: '', email: '', conquer: false }); // Reset form
+      } else {
+        throw new Error('Failed to submit the form.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showMessage('Submission failed. Please check your console for details.', 'error');
+    }
+  };
+
+  // Function to display messages in the UI
+  const showMessage = (text, type) => {
+    setMessage(text);
+    setMessageType(type);
+  };
+
+  return (
+    <>
+      <style>
+        {`
+          /* Custom CSS for animations and fixed background */
+          @keyframes fade-spin {
             0% {
-                transform: rotate(0deg);
-                opacity: 0.05;
+              transform: rotate(0deg);
+              opacity: 0.05;
             }
             50% {
-                transform: rotate(180deg);
-                opacity: 0.15;
+              transform: rotate(180deg);
+              opacity: 0.15;
             }
             100% {
-                transform: rotate(360deg);
-                opacity: 0.05;
+              transform: rotate(360deg);
+              opacity: 0.05;
             }
-        }
+          }
 
-        /* Subtle background image effect (fixed) */
-        body::before {
-            content: '';
-            position: fixed; /* Fixed position so it doesn't scroll with content */
+          .background-animation {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* Your photo from the GitHub repository */
             background-image: url('https://raw.githubusercontent.com/khanmil/space-risk/main/assets/hi.png');
-            background-color: #0d121c; /* Fallback color */
             background-size: cover;
-            background-position: top;
-            opacity: 0.05;
+            background-position: center;
             filter: blur(5px);
-            z-index: -1;
-            /* Apply the spinning animation */
+            z-index: -10;
             animation: fade-spin 30s linear infinite;
-        }
-
-        /* Main content container for the form */
-        .content-wrapper {
-            width: 100%;
-            max-width: 480px;
-            padding: 2rem 1rem; /* Adjust padding for mobile responsiveness */
-            position: relative;
-            z-index: 10; /* Ensures the form scrolls on top of the fixed background */
-            background-color: transparent;
-        }
-
-        .container {
-            width: 100%;
-            padding: 2rem 1rem;
-            background-color: rgba(26, 32, 45, 0.8); /* Semi-transparent dark container */
-            border-radius: 1rem;
-            box-shadow: 0 0 15px rgba(181, 242, 255, 0.2); /* Subtle glow effect */
-            backdrop-filter: blur(10px); /* Blur behind the form */
-            transition: background-color 0.3s, box-shadow 0.3s;
-            position: relative;
-            z-index: 1;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 2rem;
-            text-shadow: 0 0 5px #b5f2ff; /* Glowing text */
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        input[type="email"],
-        input[type="text"] {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #4a5568;
-            border-radius: 0.5rem;
-            background-color: #131720;
-            color: #e2e8f0;
-            box-sizing: border-box;
-            transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
-        }
-
-        input[type="email"]:focus,
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #63b3ed;
-            box-shadow: 0 0 10px #63b3ed; /* Stronger glow on focus */
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        input[type="checkbox"] {
-            margin-right: 0.75rem;
-            width: 1.25rem;
-            height: 1.25rem;
-            accent-color: #63b3ed;
-            box-shadow: 0 0 5px #63b3ed;
-        }
-
-        button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: #4a0e88; /* Dark purple */
-            color: #ffffff;
-            font-weight: 600;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
-            box-shadow: 0 0 10px #6a0dad; /* Glowing button */
-        }
-
-        button:hover {
-            background-color: #6a0dad;
+          }
+          
+          /* Custom styling for glow effects and transitions */
+          .glow-text {
+            text-shadow: 0 0 5px #b5f2ff;
+          }
+          .glow-input:focus {
+            box-shadow: 0 0 10px #63b3ed;
+          }
+          .glow-button {
+            box-shadow: 0 0 10px #6a0dad;
+            transition: all 0.3s ease;
+          }
+          .glow-button:hover {
             box-shadow: 0 0 15px #6a0dad;
-        }
-
-        button:active {
-            transform: scale(0.99);
-        }
-
-        .message-box {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            text-align: center;
-            display: none;
-        }
-
-        .message-box.info {
-            background-color: #1e3a8a;
-            color: #bfdbfe;
-        }
-
-        .message-box.success {
-            background-color: #10b981;
-            color: #042f2e;
-        }
-
-        .message-box.error {
-            background-color: #ef4444;
-            color: #fee2e2;
-        }
-
-        /* Light mode (for preference-sensitive users) */
-        @media (prefers-color-scheme: light) {
-            body {
-                background-color: #f1f5f9;
-                color: #1e293b;
+          }
+          
+          /* Utility classes for light mode preferences */
+          @media (prefers-color-scheme: light) {
+            .light-mode-bg {
+              background-color: #f1f5f9;
             }
+            .light-mode-text {
+              color: #1e293b;
+            }
+            .light-mode-container {
+              background-color: rgba(255, 255, 255, 0.9);
+            }
+            .light-mode-shadow {
+              box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            .light-mode-glow-text {
+              text-shadow: none;
+            }
+            .light-mode-input {
+              background-color: #f9fafb;
+              color: #1e293b;
+              border-color: #d1d5db;
+            }
+            .light-mode-input:focus {
+              border-color: #3b82f6;
+              box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            }
+            .light-mode-checkbox {
+              accent-color: #3b82f6;
+              box-shadow: none;
+            }
+            .light-mode-button {
+              background-color: #3b82f6;
+              box-shadow: none;
+            }
+            .light-mode-button:hover {
+              background-color: #2563eb;
+              box-shadow: none;
+            }
+            .light-mode-message-info {
+              background-color: #e0f2fe;
+              color: #0c4a6e;
+            }
+            .light-mode-message-success {
+              background-color: #d1fae5;
+              color: #065f46;
+            }
+            .light-mode-message-error {
+              background-color: #fee2e2;
+              color: #991b1b;
+            }
+          }
+        `}
+      </style>
+      
+      {/* Background with the spinning image animation */}
+      <div className="background-animation"></div>
 
-            body::before {
-                opacity: 0.02;
-                filter: blur(2px);
-            }
-
-            .container {
-                background-color: rgba(255, 255, 255, 0.9);
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            }
-
-            h1 {
-                text-shadow: none;
-            }
-
-            input[type="email"],
-            input[type="text"] {
-                background-color: #f9fafb;
-                color: #1e293b;
-                border-color: #d1d5db;
-            }
-
-            input[type="email"]:focus,
-            input[type="text"]:focus {
-                border-color: #3b82f6;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-            }
-
-            input[type="checkbox"] {
-                accent-color: #3b82f6;
-                box-shadow: none;
-            }
-
-            button {
-                background-color: #3b82f6;
-                box-shadow: none;
-            }
-
-            button:hover {
-                background-color: #2563eb;
-                box-shadow: none;
-            }
-            .message-box.info {
-                background-color: #e0f2fe;
-                color: #0c4a6e;
-            }
-
-            .message-box.success {
-                background-color: #d1fae5;
-                color: #065f46;
-            }
-
-            .message-box.error {
-                background-color: #fee2e2;
-                color: #991b1b;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="content-wrapper">
-        <div class="container">
-            <h1>Galactic Conquest Registration</h1>
-            <form id="galacticForm">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="conquer" name="conquer">
-                    <label for="conquer">I want to conquer the galaxy.</label>
-                </div>
-                <button type="submit">Submit</button>
-            </form>
-            <div id="messageBox" class="message-box"></div>
+      {/* Main content area, centered on the screen */}
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div 
+          className="w-full max-w-md p-6 sm:p-8 bg-gray-800/80 rounded-2xl shadow-xl backdrop-blur-md text-cyan-200"
+          style={{ boxShadow: '0 0 15px rgba(181, 242, 255, 0.2)' }}
+        >
+          <h1 className="text-2xl font-bold text-center mb-6 glow-text">Galactic Conquest Registration</h1>
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter your name"
+                required
+                className="mt-1 block w-full p-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 glow-input"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                required
+                className="mt-1 block w-full p-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 glow-input"
+              />
+            </div>
+            
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="conquer"
+                name="conquer"
+                checked={formData.conquer}
+                onChange={handleChange}
+                className="h-5 w-5 rounded-md text-purple-600 border-gray-600 accent-purple-600"
+              />
+              <label htmlFor="conquer" className="ml-2 block text-sm font-medium">
+                I want to conquer the galaxy.
+              </label>
+            </div>
+            
+            <button
+              type="submit"
+              className="w-full px-4 py-3 bg-purple-800 text-white font-bold rounded-lg hover:bg-purple-900 active:scale-99 glow-button"
+            >
+              Submit
+            </button>
+          </form>
+          
+          {message && (
+            <div 
+              className={`mt-4 p-3 rounded-lg text-sm text-center ${
+                messageType === 'success' ? 'bg-green-700 text-green-100' :
+                messageType === 'error' ? 'bg-red-700 text-red-100' :
+                'bg-blue-700 text-blue-100'
+              }`}
+            >
+              {message}
+            </div>
+          )}
         </div>
-    </div>
+      </div>
+    </>
+  );
+};
 
-    <script>
-        // IMPORTANT: Replace this URL with the deployed Google Apps Script URL
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzR_5FV_ZMEAHdDId1he4kCANlcO8RDNBbn3qoZ8IZ-lv7EK2ub2VSyawX4yyATEgUX/exec';
-        const form = document.getElementById('galacticForm');
-        const messageBox = document.getElementById('messageBox');
-
-        // Function to display messages in the UI
-        function showMessage(text, type) {
-            messageBox.textContent = text;
-            messageBox.className = `message-box ${type}`;
-            messageBox.style.display = 'block';
-        }
-
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Prevent the default form submission
-
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
-            // Checkbox status is 'on' if checked, or undefined if not. Convert to a boolean string.
-            data.conquer = data.conquer === 'on' ? 'Yes' : 'No';
-
-            // Clear previous messages and show loading indicator
-            showMessage('Submitting...', 'info');
-
-            try {
-                // Perform the fetch request to the Google Apps Script
-                const response = await fetch(scriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors', // Required for Google Apps Script to work correctly
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams(data).toString()
-                });
-
-                // The no-cors mode prevents us from reading the response, but if the fetch is successful
-                // without errors, we can assume the script received the data.
-                // The 'opaque' type indicates a successful no-cors request.
-                if (response.ok || response.type === 'opaque') {
-                    showMessage('Submission successful! We\'ve noted your intent to conquer the galaxy.', 'success');
-                    form.reset(); // Clear the form fields
-                } else {
-                    // This block will only run if there's a network issue, not a script error.
-                    throw new Error('Failed to submit the form.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage('Submission failed. Please check your console for details.', 'error');
-            }
-        });
-    </script>
-</body>
-</html>
+export default App;
