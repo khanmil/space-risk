@@ -4,319 +4,225 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galactic Conquest Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* Base styles for a dark, sci-fi theme */
+        /* Use Orbitron for headings for that sci-fi game feel, and Inter for body text for readability */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Orbitron', sans-serif;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0a0d13; /* Deep space black */
-            color: #b5f2ff; /* Glowing cyan text */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center; /* Center content vertically */
-            min-height: 100vh; /* Ensures the body is at least as tall as the viewport */
-            padding: 5vh 1rem; /* Consistent padding for all screens */
-            margin: 0;
-            transition: background-color 0.3s, color 0.3s;
+            background-color: #0c0a14;
+            overflow: hidden; /* Hide anything that moves off-screen */
         }
 
-        /* Define the fade and spin animation */
-        @keyframes fade-spin {
-            0% {
-                transform: rotate(0deg);
-                opacity: 0.05;
-            }
-            50% {
-                transform: rotate(180deg);
-                opacity: 0.15;
-            }
-            100% {
-                transform: rotate(360deg);
-                opacity: 0.05;
-            }
-        }
-
-        /* Subtle background image effect (fixed) */
-        body::before {
-            content: '';
+        /* Animated background container */
+        #background-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://raw.githubusercontent.com/khanmil/space-risk/main/assets/hi.png');
-            background-color: #0d121c;
-            background-size: cover;
-            background-position: center;
-            opacity: 0.05;
-            filter: blur(5px);
             z-index: -1;
-            animation: fade-spin 30s linear infinite;
         }
 
-        /* Main content container for the form */
-        .content-wrapper {
-            width: 100%;
-            max-width: 480px;
-            position: relative;
-            z-index: 10;
+        /* Individual ship style */
+        .bouncing-ship {
+            position: absolute;
+            background-image: url('https://raw.githubusercontent.com/khanmil/space-risk/main/assets/hi.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            filter: blur(2px);
+            /* The animation property will be set by JavaScript */
         }
 
-        .container {
-            width: 100%;
-            padding: 2rem;
-            background-color: rgba(26, 32, 45, 0.8);
-            border-radius: 1rem;
-            box-shadow: 0 0 15px rgba(181, 242, 255, 0.2);
-            backdrop-filter: blur(10px);
-            transition: background-color 0.3s, box-shadow 0.3s;
+        /* Keyframe animations for combined spinning and bouncing */
+        @keyframes move-spin-1 {
+            0%   { transform: translate(0, 0) rotate(0deg); }
+            25%  { transform: translate(10vw, -15vh) rotate(90deg); }
+            50%  { transform: translate(-5vw, 10vh) rotate(180deg); }
+            75%  { transform: translate(15vw, 5vh) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        @keyframes move-spin-2 {
+            0%   { transform: translate(0, 0) rotate(0deg); }
+            25%  { transform: translate(-12vw, 8vh) rotate(-90deg); }
+            50%  { transform: translate(10vw, -10vh) rotate(-180deg); }
+            75%  { transform: translate(-5vw, -15vh) rotate(-270deg); }
+            100% { transform: translate(0, 0) rotate(-360deg); }
+        }
+
+        @keyframes move-spin-3 {
+            0%   { transform: translate(0, 0) rotate(0deg); }
+            25%  { transform: translate(8vw, 12vh) rotate(60deg); }
+            50%  { transform: translate(15vw, -5vh) rotate(120deg); }
+            75%  { transform: translate(-10vw, 10vh) rotate(180deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+
+        /* Custom focus glow effect */
+        .form-input:focus {
+            outline: none;
+            border-color: #22d3ee; /* cyan-400 */
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.5);
+        }
+
+        /* Custom button style */
+        .btn-glow {
+            transition: all 0.3s ease;
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.6);
+            transform: translateY(-2px);
+        }
+        .btn-glow:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
         }
         
-        /* Mobile-specific adjustments */
-        @media (max-width: 640px) {
-            .container {
-                padding: 1.5rem;
-            }
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 2rem;
-            text-shadow: 0 0 5px #b5f2ff;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        input[type="email"],
-        input[type="text"] {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #4a5568;
-            border-radius: 0.5rem;
-            background-color: #131720;
-            color: #e2e8f0;
-            box-sizing: border-box;
-            transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
-        }
-
-        input[type="email"]:focus,
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #63b3ed;
-            box-shadow: 0 0 10px #63b3ed;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        input[type="checkbox"] {
-            margin-right: 0.75rem;
-            width: 1.25rem;
-            height: 1.25rem;
-            accent-color: #63b3ed;
-            box-shadow: 0 0 5px #63b3ed;
-        }
-
-        button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: #4a0e88;
-            color: #ffffff;
-            font-weight: 600;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
-            box-shadow: 0 0 10px #6a0dad;
-        }
-
-        button:hover {
-            background-color: #6a0dad;
-            box-shadow: 0 0 15px #6a0dad;
-        }
-
-        button:active {
-            transform: scale(0.99);
-        }
-
-        .message-box {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            text-align: center;
-            display: none;
-        }
-
-        .message-box.info {
-            background-color: #1e3a8a;
-            color: #bfdbfe;
-        }
-
-        .message-box.success {
-            background-color: #10b981;
-            color: #042f2e;
-        }
-
-        .message-box.error {
-            background-color: #ef4444;
-            color: #fee2e2;
-        }
-
-        /* Light mode styling */
-        @media (prefers-color-scheme: light) {
-            body {
-                background-color: #f1f5f9;
-                color: #1e293b;
-            }
-
-            body::before {
-                opacity: 0.02;
-                filter: blur(2px);
-            }
-
-            .container {
-                background-color: rgba(255, 255, 255, 0.9);
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            }
-
-            h1 {
-                text-shadow: none;
-            }
-
-            input[type="email"],
-            input[type="text"] {
-                background-color: #f9fafb;
-                color: #1e293b;
-                border-color: #d1d5db;
-            }
-
-            input[type="email"]:focus,
-            input[type="text"]:focus {
-                border-color: #3b82f6;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-            }
-
-            input[type="checkbox"] {
-                accent-color: #3b82f6;
-                box-shadow: none;
-            }
-
-            button {
-                background-color: #3b82f6;
-                box-shadow: none;
-            }
-
-            button:hover {
-                background-color: #2563eb;
-                box-shadow: none;
-            }
-            .message-box.info {
-                background-color: #e0f2fe;
-                color: #0c4a6e;
-            }
-
-            .message-box.success {
-                background-color: #d1fae5;
-                color: #065f46;
-            }
-
-            .message-box.error {
-                background-color: #fee2e2;
-                color: #991b1b;
-            }
+        /* Glassmorphism effect for the form container */
+        .glass-container {
+            background: rgba(15, 23, 42, 0.6); /* slate-900 with opacity */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 with opacity */
         }
     </style>
 </head>
-<body>
-    <div class="content-wrapper">
-        <div class="container">
-            <h1>Galactic Conquest Registration</h1>
-            <form id="galacticForm">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+<body class="text-gray-200 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Container for the animated background -->
+    <div id="background-container"></div>
+
+    <div class="w-full max-w-2xl mx-auto z-10">
+        <div class="glass-container rounded-lg p-6 md:p-10 shadow-2xl">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-cyan-300 tracking-wider">Galactic Conquest Registration Form</h1>
+            </div>
+
+            <form id="registrationForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Your Earth Name -->
+                    <div>
+                        <label for="alias" class="block mb-2 text-sm font-medium text-slate-300">Your Earth Name</label>
+                        <input type="text" id="alias" name="Alias" class="form-input bg-slate-800 border border-slate-700 text-white text-sm rounded-lg block w-full p-2.5 transition duration-300" placeholder="e.g., Pat" required>
+                    </div>
+                    <!-- Email Address -->
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-slate-300">Secure Comms (Email)</label>
+                        <input type="email" id="email" name="Email" class="form-input bg-slate-800 border border-slate-700 text-white text-sm rounded-lg block w-full p-2.5 transition duration-300" placeholder="commander@domain.com" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" id="submitButton" class="btn-glow bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold py-3 px-8 rounded-lg text-lg tracking-wide">
+                        Transmit Registration
+                    </button>
                 </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="conquer" name="conquer">
-                    <label for="conquer">I want to conquer the galaxy.</label>
-                </div>
-                <button type="submit">Submit</button>
             </form>
-            <div id="messageBox" class="message-box"></div>
+            
+            <!-- Status Message Area -->
+            <div id="statusMessage" class="text-center mt-6 text-sm font-medium" role="status"></div>
         </div>
     </div>
 
     <script>
-        // IMPORTANT: Replace this URL with the deployed Google Apps Script URL
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzR_5FV_ZMEAHdDId1he4kCANlcO8RDNBbn3qoZ8IZ-lv7EK2ub2VSyawX4yyATEgUX/exec';
-        const form = document.getElementById('galacticForm');
-        const messageBox = document.getElementById('messageBox');
+        // --- Background Animation Script ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('background-container');
+            const shipCount = 20; // Number of ships to generate
+            const animationNames = ['move-spin-1', 'move-spin-2', 'move-spin-3']; // Array of animation names
 
-        // Function to display messages in the UI
-        function showMessage(text, type) {
-            messageBox.textContent = text;
-            messageBox.className = `message-box ${type}`;
-            messageBox.style.display = 'block';
-        }
+            for (let i = 0; i < shipCount; i++) {
+                const ship = document.createElement('div');
+                ship.classList.add('bouncing-ship');
 
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Prevent the default form submission
+                // Randomize properties for a "jumbled" look
+                const size = Math.random() * 150 + 50; // size between 50px and 200px
+                const x = Math.random() * 100; // horizontal position in %
+                const y = Math.random() * 100; // vertical position in %
+                const duration = Math.random() * 40 + 20; // duration between 20s and 60s
+                const opacity = Math.random() * 0.3 + 0.1; // opacity between 0.1 and 0.4
+                
+                // Randomly pick an animation from the array
+                const randomAnimationName = animationNames[Math.floor(Math.random() * animationNames.length)];
 
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+                ship.style.width = `${size}px`;
+                ship.style.height = `${size}px`;
+                ship.style.left = `${x}vw`;
+                ship.style.top = `${y}vh`;
+                ship.style.opacity = opacity;
+                
+                // Set the full animation property
+                ship.style.animation = `${randomAnimationName} ${duration}s ease-in-out infinite`;
 
-            // Checkbox status is 'on' if checked, or undefined if not. Convert to a boolean string.
-            data.conquer = data.conquer === 'on' ? 'Yes' : 'No';
-
-            // Clear previous messages and show loading indicator
-            showMessage('Submitting...', 'info');
-
-            try {
-                // Perform the fetch request to the Google Apps Script
-                const response = await fetch(scriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors', // Required for Google Apps Script to work correctly
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams(data).toString()
-                });
-
-                // The no-cors mode prevents us from reading the response, but if the fetch is successful
-                // without errors, we can assume the script received the data.
-                // The 'opaque' type indicates a successful no-cors request.
-                if (response.ok || response.type === 'opaque') {
-                    showMessage('Submission successful! We\'ve noted your intent to conquer the galaxy.', 'success');
-                    form.reset(); // Clear the form fields
-                } else {
-                    // This block will only run if there's a network issue, not a script error.
-                    throw new Error('Failed to submit the form.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage('Submission failed. Please check your console for details.', 'error');
+                container.appendChild(ship);
             }
         });
+
+        // --- Form Submission Script ---
+        // IMPORTANT: Replace this URL with the one you get after deploying your Google Apps Script.
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQ5XrzobHJWU0DEm72HryZAKP4gzpMMvh1lpgj8pOjJYKvGyZEla-HeiYZW0dff8xy/exec';
+
+        const form = document.getElementById('registrationForm');
+        const submitButton = document.getElementById('submitButton');
+        const statusMessage = document.getElementById('statusMessage');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Disable button and show loading message
+            submitButton.disabled = true;
+            submitButton.textContent = 'Transmitting...';
+            statusMessage.textContent = 'Securing connection...';
+            statusMessage.className = 'text-center mt-6 text-sm font-medium text-yellow-400';
+
+            const formData = new FormData(form);
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                // Handle network errors
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                if(data.result === 'success') {
+                    // Handle success
+                    statusMessage.textContent = 'Registration Received. Welcome to the Alliance!';
+                    statusMessage.className = 'text-center mt-6 text-sm font-medium text-green-400';
+                    form.reset(); // Clear the form
+                } else {
+                    // Handle errors reported by the script
+                    throw new Error(data.message || 'An unknown error occurred.');
+                }
+            })
+            .catch(error => {
+                // Handle any errors in the fetch process
+                console.error('Error:', error);
+                statusMessage.textContent = `Error: ${error.message}. Please try again.`;
+                statusMessage.className = 'text-center mt-6 text-sm font-medium text-red-400';
+            })
+            .finally(() => {
+                // Re-enable the button regardless of outcome
+                submitButton.disabled = false;
+                submitButton.textContent = 'Transmit Registration';
+            });
+        });
     </script>
+
 </body>
 </html>
