@@ -48,7 +48,8 @@
             margin-bottom: 0.5rem;
         }
 
-        input[type="email"] {
+        input[type="email"],
+        input[type="text"] {
             width: 100%;
             padding: 0.75rem 1rem;
             border: 1px solid #d1d5db;
@@ -59,7 +60,8 @@
             transition: border-color 0.3s, background-color 0.3s;
         }
 
-        input[type="email"]:focus {
+        input[type="email"]:focus,
+        input[type="text"]:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
@@ -133,13 +135,15 @@
                 box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
             }
 
-            input[type="email"] {
+            input[type="email"],
+            input[type="text"] {
                 background-color: #4a5568;
                 color: #e2e8f0;
                 border-color: #4a5568;
             }
 
-            input[type="email"]:focus {
+            input[type="email"]:focus,
+            input[type="text"]:focus {
                 border-color: #63b3ed;
                 box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.25);
             }
@@ -165,6 +169,10 @@
     <div class="container">
         <h1>Galactic Conquest Registration</h1>
         <form id="galacticForm">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            </div>
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required>
