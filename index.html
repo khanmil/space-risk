@@ -20,14 +20,6 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* Container for the image, positioned above the form */
-        .image-header {
-            width: 100%;
-            max-width: 480px;
-            text-align: center;
-            padding: 2rem 0;
-        }
-
         /* Define the fade and spin animation */
         @keyframes fade-spin {
             0% {
@@ -44,30 +36,40 @@
             }
         }
 
-        /* The image itself, with subtle styling and animation */
-        .header-image {
+        /* Subtle background image effect (fixed) */
+        body::before {
+            content: '';
+            position: fixed; /* Fixed position so it doesn't scroll with content */
+            top: 0;
+            left: 0;
             width: 100%;
-            height: auto;
-            max-height: 25vh;
-            object-fit: contain;
+            height: 100%;
+            /* Your photo from the GitHub repository */
+            background-image: url('https://raw.githubusercontent.com/khanmil/space-risk/main/assets/hi.png');
+            background-color: #0d121c; /* Fallback color */
+            background-size: cover;
+            background-position: top;
+            opacity: 0.05;
             filter: blur(5px);
-            animation: fade-spin 30s linear infinite; /* Faster animation */
+            z-index: -1;
+            /* Apply the spinning animation */
+            animation: fade-spin 30s linear infinite;
         }
 
         /* Main content container for the form, scrolls over the header */
-        main {
+        .content-wrapper {
             width: 100%;
             max-width: 480px;
-            padding-bottom: 2rem;
+            padding: 2rem 1rem; /* Adjust padding for mobile responsiveness */
+            margin-top: 40vh; /* Increased top margin to push the form down */
             position: relative;
-            z-index: 10; /* Ensures the form scrolls on top of the header */
-            margin-top: -2rem; /* Pulls the form up slightly to overlap the header's padding */
+            z-index: 10; /* Ensures the form scrolls on top of the fixed background */
+            background-color: transparent;
         }
 
         .container {
             width: 100%;
-            max-width: 480px;
-            padding: 2rem;
+            padding: 2rem 1rem;
             background-color: rgba(26, 32, 45, 0.8); /* Semi-transparent dark container */
             border-radius: 1rem;
             box-shadow: 0 0 15px rgba(181, 242, 255, 0.2); /* Subtle glow effect */
@@ -180,9 +182,9 @@
                 color: #1e293b;
             }
 
-            .image-header {
+            body::before {
+                opacity: 0.02;
                 filter: blur(2px);
-                opacity: 0.05;
             }
 
             .container {
@@ -239,10 +241,7 @@
     </style>
 </head>
 <body>
-    <div class="image-header">
-        <img src="https://raw.githubusercontent.com/khanmil/space-risk/main/assets/hi.png" class="header-image" alt="Galactic themed background image">
-    </div>
-    <main>
+    <div class="content-wrapper">
         <div class="container">
             <h1>Galactic Conquest Registration</h1>
             <form id="galacticForm">
@@ -262,7 +261,7 @@
             </form>
             <div id="messageBox" class="message-box"></div>
         </div>
-    </main>
+    </div>
 
     <script>
         // IMPORTANT: Replace this URL with the deployed Google Apps Script URL
